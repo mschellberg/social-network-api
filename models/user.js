@@ -1,6 +1,9 @@
 const opt = { toJSON: { virtuals: true, getters: false, id: false} };
-const { Schema, model, Types } = require('mongoose');
+const { Schema, model } = require('mongoose');
+
 const moment = require('moment');
+
+//const Thought = require('../models/thought');
 
 const userSchema = new Schema({
   username: {
@@ -25,14 +28,7 @@ const userSchema = new Schema({
     [{type: Schema.Types.ObjectId, 
       ref: 'User'
     }], 
-  /*
-  toJSON: {
-    virtuals: true,
-    getters: true 
-  },
-  id: false
-  */
-});
+}, opt );
 const User = model('User', userSchema);
 // creates virtual to retrieve length of users friends
 userSchema.virtual('friendCount').get(function() {

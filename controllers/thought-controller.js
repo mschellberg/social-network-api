@@ -17,13 +17,24 @@ const thoughtController  = {
         });
     },
     // create thought
-    createThought({ body }, res) {
+    createThought({ params, body }, res) {
         Thought.create(body)
-        .then(dbThoughtData => res.sendStatus(200))
-        .catch(err => {
-            console.log(err);
-            res.sendStatus(400);
-        });
+        .then(({ _id}) => {
+            return User.findOneAndUpdate(
+                { username: body.username},
+                { $push: { thoughts: _id }},
+                { new: true}
+            );
+        })
+        .then(dbUserData => {
+            if (!dbUserData) {
+                res.status(400).json({ message: 'No user found with this name'});
+                return;
+            }
+            res.json(dbUserData);
+        })
+        .catch(err => res.json(err));
+        
     },
     // retrieve thought by ID
     getThoughtById({ params }, res) {
@@ -40,8 +51,8 @@ const thoughtController  = {
             res.status(400).json(err)
         });  
     },
-    deleteThought ({ params }, res) { // DELETE ISNT WORKING, COME BACK TO IT
-        Thought.findOneAndDelete({ id: params.id })
+    deleteThought ({ params }, res) { 
+        Thought.findOneAndDelete({ _id: params.id })
         .then(dbThoughtData => {
             if (!dbThoughtData) {
                 res.status(400).json({ message: 'No thought found with this id!'});

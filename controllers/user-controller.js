@@ -1,20 +1,26 @@
+//const { User, Thought } = require('../models/index');
 const User = require('../models/user');
+//const Thought = require('../models/thought');
+
 
 const userController = {
+
     //get all users
     getAllUsers(req,res) {
         User.find({})
         .populate({
             path: 'thoughts',
             select: '-__v'
-        })
+          })
         .select('-__v')
         .then(dbUserData => res.json(dbUserData))
         .catch(err => {
             console.log(err);
             res.sendStatus(400);
         });
+        
     },
+    
     // create user
     createUser({ body }, res) {
         User.create(body)
@@ -58,7 +64,7 @@ const userController = {
         },
         // update user
         updateUser ({ params, body }, res) {
-            User.findOneAndUpdate({ _id: params.id}, body, { new: true })
+            User.findOneAndUpdate({ _id: params.id }, body, { new: true })
             
             .then(dbUserData => {
                 if (!dbUserData) {
@@ -73,8 +79,8 @@ const userController = {
         // add friend
         addFriend({ params }, res) {
             User.findOneAndUpdate(
-                { _id: params.userId},
-                { $push: { friends: params.friendId }},
+                { _id: params.id},
+                { $addToSet: { friends: params.friendId }},
                 { new: true }
             )
             .then(dbUserData => {
