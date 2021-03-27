@@ -78,7 +78,7 @@ const thoughtController  = {
         .catch(err => res.status(400).json(err));
     },
 
-    // reaction
+    // add reaction
     addReaction ({ params, body }, res) {
          Thought.findOneAndUpdate(
             { _id: params.thoughtId },
@@ -93,6 +93,16 @@ const thoughtController  = {
             res.json(dbThoughtData);
         })
         .catch(err => res.status(500).json(err))
+    },
+     // remove reaction
+     deleteReaction({ params }, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $pull: {reactions: params.reactionId} },
+            {new: true }
+        )
+        .then(dbThoughtData => res.json(dbThoughtData))
+        .catch(err => res.json(err));
     }
 }
 
