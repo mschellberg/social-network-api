@@ -1,5 +1,5 @@
-//const { User, Thought } = require('../models/index');
-const User = require('../models/user');
+const { User, Thought } = require('../models/index');
+//const User = require('../models/user');
 //const Thought = require('../models/thought');
 
 
@@ -79,21 +79,19 @@ const userController = {
         // add friend
         addFriend({ params }, res) {
             User.findOneAndUpdate(
-                { _id: params.id},
+                { _id: params.userId},
                 { $addToSet: { friends: params.friendId }},
                 { new: true }
             )
             .then(dbUserData => {
                 if(!dbUserData) {
-                    res.status(400).json({ message: 'No user found with this user id!'});
+                    res.status(404).json({ message: 'No user found with this user id!'});
                     return;
                 }
                 res.json(dbUserData);
             })
-            .catch(err => res.json(err))
-        }
-        
-        // remove friend
-        
+            .catch(err => res.json(err));
+        },
+      
     }
 module.exports = userController;

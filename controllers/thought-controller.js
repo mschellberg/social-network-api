@@ -1,4 +1,6 @@
 const Thought = require('../models/thought');
+const User = require('../models/user');
+const Reaction = require('../models/reaction');
 
 const thoughtController  = {
     // retrieve all thoughts
@@ -18,11 +20,11 @@ const thoughtController  = {
     },
     // create thought
     createThought({ params, body }, res) {
-        Thought.create(body)
+        return Thought.create(body)
         .then(({ _id}) => {
             return User.findOneAndUpdate(
                 { username: body.username},
-                { $push: { thoughts: _id }},
+                { $addToSet: { thoughts: _id }},
                 { new: true}
             );
         })
@@ -51,6 +53,7 @@ const thoughtController  = {
             res.status(400).json(err)
         });  
     },
+    // delete thought
     deleteThought ({ params }, res) { 
         Thought.findOneAndDelete({ _id: params.id })
         .then(dbThoughtData => {
@@ -62,6 +65,7 @@ const thoughtController  = {
         })
         .catch(err => res.status(400).json(err))
     },
+    // update thought
     updateThought ({ params, body }, res) {
         Thought.findOneAndUpdate({ _id: params.id}, body, {new: true })
         .then(dbThoughtData => {
@@ -72,6 +76,23 @@ const thoughtController  = {
             res.json(dbThoughtData)
         })
         .catch(err => res.status(400).json(err));
+    },
+
+    // reaction
+    addReaction ({ params, body }, res) {
+         Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $addToSet: { reactions: body } },
+            { new: true}
+        )
+        .then(dbThoughtData => {
+            if (!dbThoughtData) {
+                res.status(400).json({ message: "No thought found with this id number"});
+                return;
+            }
+            res.json(dbThoughtData);
+        })
+        .catch(err => res.status(500).json(err))
     }
 }
 

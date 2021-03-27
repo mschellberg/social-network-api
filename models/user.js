@@ -1,7 +1,6 @@
-const opt = { toJSON: { virtuals: true, getters: false, id: false} };
 const { Schema, model } = require('mongoose');
-
-const moment = require('moment');
+//const moment = require('moment');
+const opt = { toJSON: { virtuals: true, getters: true, id: false} };
 
 //const Thought = require('../models/thought');
 

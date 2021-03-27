@@ -1,8 +1,5 @@
-const opt = { toJSON: { virtuals: true, getters: false, id: false} };
-//const { Schema, model, Types } = require('mongoose');
-//const reaction = require('reaction');
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const { Schema, model } = require('mongoose');
+const reactionSchema = require('./reaction');
 const moment = require('moment');
 
 
@@ -21,22 +18,23 @@ const thoughtSchema = new Schema ({
     username: {
         type: String,
         required: true,
-        ref: "User"
+        //ref: "User"
     },
-    
-    //reactions: [reactionSchema]
-        /*[{type: Schema.Types.ObjectId, 
-            ref: 'Reaction'
-        }],*/
-        
-    //toJson: { virtuals: true},
-    //id: false
-});
+    reactions: [reactionSchema]
+    },   
+    {   
+    toJson: { 
+        virtuals: true, 
+        getters: true
+    },
+    id: false
+}
+);
 
 
 thoughtSchema.virtual('reactionCount').get(function() {
     return this.reactions.length;
   });
 
-//const Thought = model('Thought', thoughtSchema);
-module.exports = mongoose.model("Thought", thoughtSchema);
+const Thought = model('Thought', thoughtSchema);
+module.exports = Thought;
